@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; // Fixed viewport height so the page itself never scrolls
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #0a0a0a;
+}
+
+// Header and footer keep their height and stay in place
+app-header,
+app-footer {
+  flex: none;
+}
+
+// Middle section fills the space between header and footer; its children scroll internally
+.app-layout-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+app-side-bar {
+  flex: 1;
+  min-height: 0;
+}
+
+main {
+  width: 100%;
+}

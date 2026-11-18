@@ -1,0 +1,55 @@
+<header class="w-full sticky top-0 z-10 bg-secondary-black border-b border-neutral-800 px-6 h-16 flex items-center justify-between text-white select-none">
+  
+  <!-- Left Section: Logo & Navigation Links -->
+  <div class="flex items-center space-x-6">
+    <!-- Sidebar Toggle Menu Button -->
+    <button mat-icon-button (click)="onMenuClick()" class="transition-colors menu-bar-close">
+      <mat-icon>menu</mat-icon>
+    </button>
+    
+    <!-- Brand / Logo -->
+    <a routerLink="/" class="flex items-center space-x-2.5 group cursor-pointer">
+      <svg class="w-5 h-5 text-neutral-300 group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+      <span class="font-semibold font-poppins text-base tracking-wide text-neutral-100">Book Worm</span>
+    </a>
+
+    <!-- Vertical Separator -->
+    <div class="h-4 w-[1px] bg-neutral-700"></div>
+
+    <!-- Navigation Links -->
+    <nav class="flex items-center space-x-6 text-sm font-medium font-lato text-neutral-400">
+      <a routerLink="/orders" class="hover:text-white transition-colors">My Orders</a>
+      <a routerLink="/wishlist" class="hover:text-white transition-colors">My Wishlist</a>
+      <a routerLink="/writers" class="hover:text-white transition-colors">My Writers</a>
+    </nav>
+  </div>
+
+  <!-- Right Section: Cart & User Profile Icons -->
+  <div class="flex items-center space-x-5 text-neutral-300">
+    
+    <!-- Shopping Cart Icon with Badge -->
+    <a routerLink="/cart" class="relative hover:text-white transition-colors cursor-pointer p-1">
+      <mat-icon>shopping_cart</mat-icon>
+      <!-- Notification Badge -->
+      <span *ngIf="cart.itemCount() > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+        {{ cart.itemCount() }}
+      </span>
+    </a>
+
+    <!-- Login / user -->
+    @if (auth.isLoggedIn()) {
+      <span class="flex items-center space-x-1 text-sm font-lato text-neutral-300">
+        <mat-icon>person</mat-icon>
+        <span>{{ auth.user()?.first_name }}</span>
+        <span class="text-xs text-mint-500 pl-2" title="Gift points">{{ auth.user()?.gift_points }} pts</span>
+      </span>
+      <button type="button" class="text-sm font-lato hover:text-white transition-colors" (click)="logout()">Logout</button>
+    } @else {
+      <a routerLink="/auth/login" class="text-sm font-lato hover:text-white transition-colors">Login</a>
+    }
+
+  </div>
+
+</header>

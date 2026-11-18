@@ -1,0 +1,50 @@
+<div class="font-lato select-none space-y-5">
+  <h1 class="text-lg font-semibold font-poppins text-white border-b border-neutral-800 pb-2">My Orders</h1>
+
+  @if (message()) {
+    <p class="text-xs" [class.text-mint-500]="!isError()" [class.text-red-400]="isError()" role="status">
+      {{ message() }}
+      @if (!isError()) { <a routerLink="/cart" class="underline text-blue-400 ml-1">View cart</a> }
+    </p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400">Loading your orders...</p>
+  } @else if (orders().length === 0) {
+    <p class="text-sm text-neutral-400 py-8 text-center border border-dashed border-neutral-800 rounded-lg">
+      You have not placed any orders yet. <a routerLink="/home" class="text-blue-400 underline">Start shopping</a>
+    </p>
+  }
+
+  @for (o of orders(); track o.id) {
+    <article class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg space-y-3">
+      <header class="flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-400">
+        <span>Order <a [routerLink]="['/orders', o.id]" class="text-blue-400 underline">#{{ o.id }}</a> · {{ o.placed_at | date: 'd MMM y' }}</span>
+        <span class="px-2 py-0.5 rounded border"
+              [class.border-mint-500]="o.status !== 'Cancelled'" [class.text-mint-500]="o.status !== 'Cancelled'"
+              [class.border-red-400]="o.status === 'Cancelled'" [class.text-red-400]="o.status === 'Cancelled'">{{ o.status }}</span>
+      </header>
+
+      @for (item of o.items; track item.product_id) {
+        <div class="flex gap-3 text-sm">
+          <img [src]="item.image_url" [alt]="item.title" class="w-10 h-14 object-cover bg-neutral-800 rounded" />
+          <div class="flex-1">
+            <a [routerLink]="['/catalogue/products', item.product_id]" class="text-white hover:underline">{{ item.title }}</a>
+            <p class="text-xs text-neutral-400">{{ item.author }} · Qty {{ item.quantity }}</p>
+          </div>
+          <span class="text-neutral-200">₹{{ item.line_total | number: '1.0-2' }}</span>
+        </div>
+      }
+
+      <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-800 pt-3">
+        <span class="text-sm text-white">Total ₹{{ o.total | number: '1.0-2' }}</span>
+        <div class="flex gap-2">
+          <button type="button" class="app-btn primary" (click)="buyAgain(o.id)">Buy Again</button>
+          @if (o.cancellable) {
+            <button type="button" class="app-btn danger" (click)="cancel(o.id)">Cancel Order</button>
+          }
+        </div>
+      </footer>
+    </article>
+  }
+</div>

@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  width: 100%;
+
+  .menu-bar-close {
+    color: #cccccc;
+    &:hover {
+      color: #ffffff; // Equivalent to hover:text-white
+    }
+  }
+}

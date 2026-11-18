@@ -1,0 +1,94 @@
+<div class="pay-backdrop">
+  <span class="shape s1"></span><span class="shape s2"></span><span class="shape s3"></span>
+  <span class="shape s4"></span><span class="shape s5"></span><span class="shape s6"></span>
+
+  @if (payment(); as p) {
+    <section class="pay-card font-lato select-none" aria-labelledby="pay-title">
+      <header class="pay-head">
+        <h1 id="pay-title">Complete Payment</h1>
+        <p>Payable Amount: ₹{{ p.amount | number: '1.0-2' }}</p>
+      </header>
+
+      <div class="pay-body">
+        <!-- Payment options -->
+        <nav class="pay-tabs" role="tablist" aria-label="Payment options">
+          @for (m of methods(); track m.id) {
+            <button type="button" role="tab" [attr.aria-selected]="selected() === m.id"
+                    [class.active]="selected() === m.id" (click)="select(m.id)">{{ m.label }}</button>
+          }
+        </nav>
+
+        <!-- Details for the chosen option -->
+        <form class="pay-form" (ngSubmit)="payNow()" novalidate>
+          @if (isCard()) {
+            <div class="grid grid-cols-2 gap-x-6 gap-y-4" [formGroup]="cardForm">
+              <div>
+                <label class="form-label" for="card-number">Card Number</label>
+                <input id="card-number" class="pay-input" formControlName="number" placeholder="XXXX-XXXX-XXXX-XXXX"
+                       inputmode="numeric" autocomplete="cc-number" maxlength="19" (input)="formatCardNumber($event)" />
+                @if (cardForm.controls.number.touched && cardForm.controls.number.invalid) {
+                  <p class="form-error">Enter the 16-digit card number.</p>
+                }
+              </div>
+              <div>
+                <label class="form-label" for="card-name">Name on Card</label>
+                <input id="card-name" class="pay-input" formControlName="name" placeholder="Name" autocomplete="cc-name" />
+                @if (cardForm.controls.name.touched && cardForm.controls.name.invalid) {
+                  <p class="form-error">Enter the name on the card.</p>
+                }
+              </div>
+              <div>
+                <label class="form-label" for="card-cvv">CVV</label>
+                <input id="card-cvv" class="pay-input" type="password" formControlName="cvv" placeholder="XXX"
+                       inputmode="numeric" autocomplete="cc-csc" maxlength="4" />
+                @if (cardForm.controls.cvv.touched && cardForm.controls.cvv.invalid) {
+                  <p class="form-error">Enter the 3 or 4 digit CVV.</p>
+                }
+              </div>
+              <div>
+                <label class="form-label" for="card-expiry">Date of Expiry</label>
+                <input id="card-expiry" class="pay-input" formControlName="expiry" placeholder="MM/YYYY"
+                       inputmode="numeric" autocomplete="cc-exp" maxlength="7" (input)="formatExpiry($event)" />
+                @if (cardForm.controls.expiry.touched && cardForm.controls.expiry.invalid) {
+                  <p class="form-error">Enter a valid expiry (MM/YYYY).</p>
+                }
+              </div>
+            </div>
+          } @else if (selected() === 'upi') {
+            <div [formGroup]="upiForm">
+              <label class="form-label" for="upi-id">UPI ID</label>
+              <input id="upi-id" class="pay-input" formControlName="upi_id" placeholder="name@bank" autocomplete="off" />
+              @if (upiForm.controls.upi_id.touched && upiForm.controls.upi_id.invalid) {
+                <p class="form-error">Enter a valid UPI ID, e.g. name&#64;bank.</p>
+              }
+            </div>
+          } @else {
+            <fieldset [formGroup]="walletForm" class="space-y-2">
+              <legend class="form-label">Choose a wallet</legend>
+              @for (w of selectedMethod()?.options ?? []; track w) {
+                <label class="pay-wallet">
+                  <input type="radio" formControlName="wallet" [value]="w" /> {{ w }}
+                </label>
+              }
+              @if (walletForm.controls.wallet.touched && walletForm.controls.wallet.invalid) {
+                <p class="form-error">Select a wallet.</p>
+              }
+            </fieldset>
+          }
+
+          @if (error()) {
+            <p class="form-error mt-3" role="alert">{{ error() }}</p>
+          }
+
+          <div class="pay-actions">
+            <a routerLink="/checkout" class="back-link">Back to checkout</a>
+            <button type="submit" class="pay-btn" [disabled]="processing()">
+              {{ processing() ? 'Processing...' : 'Pay Now' }}
+              <mat-icon>credit_card</mat-icon>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  }
+</div>

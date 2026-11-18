@@ -1,0 +1,30 @@
+<div class="font-lato select-none space-y-5">
+  <h1 class="text-lg font-semibold font-poppins text-white border-b border-neutral-800 pb-2">My Wishlist</h1>
+
+  @if (message()) {
+    <p class="text-xs" [class.text-mint-500]="!isError()" [class.text-red-400]="isError()" role="status">
+      {{ message() }}
+      @if (!isError()) { <a routerLink="/cart" class="underline text-blue-400 ml-1">View cart</a> }
+    </p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400">Loading your wishlist...</p>
+  } @else if (books().length === 0) {
+    <p class="text-sm text-neutral-400 py-8 text-center border border-dashed border-neutral-800 rounded-lg">
+      Your wishlist is empty. <a routerLink="/home" class="text-blue-400 underline">Browse books</a>
+    </p>
+  }
+
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    @for (book of books(); track book.id) {
+      <div class="space-y-2">
+        <app-product-card [book]="book" label="Wishlist"></app-product-card>
+        <div class="flex gap-2 justify-end">
+          <button type="button" class="app-btn primary" [disabled]="book.stock <= 0" (click)="addToCart(book)">Add to Cart</button>
+          <button type="button" class="app-btn danger" (click)="remove(book)">Remove</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

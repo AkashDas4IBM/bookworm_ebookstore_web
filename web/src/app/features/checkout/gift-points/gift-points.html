@@ -1,0 +1,13 @@
+<div class="space-y-2">
+  <p class="form-label">Gift points: <span class="text-mint-500">{{ balance }}</span> available (1 point = ₹1)</p>
+  <div class="flex gap-2">
+    <input #pts class="form-input" type="number" min="0" [max]="balance" [value]="redeemed" aria-label="Points to redeem" [disabled]="balance === 0" />
+    <button type="button" class="app-btn" [disabled]="balance === 0" (click)="redeem.emit(+pts.value || 0)">Redeem</button>
+  </div>
+  @if (redeemed > 0) {
+    <p class="text-xs text-mint-500">
+      {{ redeemed }} points redeemed.
+      <button type="button" class="text-blue-400 underline" (click)="redeem.emit(0)">Remove</button>
+    </p>
+  }
+</div>

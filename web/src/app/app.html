@@ -1,0 +1,17 @@
+<app-header (menuClicked)="sidebar.toggleSidebar()"></app-header>
+
+<div class="app-layout-container">
+  <app-side-bar #sidebar (categorySelected)="onGenreChange($event)">
+    <main class="min-h-full p-4 bg-secondary-black3">
+      <!-- Global Search & Filter Toolbar (home listing only) -->
+      @if (isHome()) {
+        <app-filter-and-search-toolbar></app-filter-and-search-toolbar>
+      }
+
+      <!-- Routed Page Content -->
+      <router-outlet></router-outlet>
+    </main>
+  </app-side-bar>
+</div>
+
+<app-footer></app-footer>

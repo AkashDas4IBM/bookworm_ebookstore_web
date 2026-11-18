@@ -1,0 +1,36 @@
+<section class="font-lato" aria-label="Related reads">
+  <h2 class="related-title">Related Reads</h2>
+
+  <div class="related-list">
+    @for (book of related(); track book.id) {
+      <article class="related-item">
+        <a [routerLink]="['/catalogue/products', book.id]" class="related-cover-link">
+          <img class="related-cover" [src]="book.image_url" [alt]="book.title" loading="lazy" (error)="hideImage($event)" />
+        </a>
+
+        <div class="related-info">
+          <h3 class="text-base font-poppins">
+            <a [routerLink]="['/catalogue/products', book.id]" class="text-white hover:text-blue-400 transition-colors">{{ book.title }}</a>
+          </h3>
+          <p class="text-xs text-neutral-300">by
+            <a [routerLink]="['/catalogue/products']" [queryParams]="{ search: book.author }" class="text-blue-400 underline">{{ book.author }}</a>
+          </p>
+          <p class="text-[11px] text-neutral-400 line-clamp-3">{{ book.description }}</p>
+          <p class="text-xs text-neutral-300">{{ book.format }}</p>
+          <p class="text-[11px]">
+            <a [routerLink]="['/catalogue/products']" [queryParams]="{ genre_group: book.genre_group }" class="text-blue-400 underline">{{ book.genre_group }}</a>,
+            <a [routerLink]="['/catalogue/categories', book.category, 'brands']" class="text-blue-400 underline">{{ book.category }}</a>
+          </p>
+          <p class="text-xl font-poppins font-semibold text-white">₹{{ book.price }}</p>
+          @if (book.tentative_delivery_date) {
+            <p class="text-[11px] text-neutral-300">Delivery by <strong>{{ book.tentative_delivery_date | date: 'EEE, d MMM' }}</strong></p>
+          }
+        </div>
+      </article>
+    } @empty {
+      @if (loaded()) {
+        <p class="text-xs text-neutral-400">No related books found.</p>
+      }
+    }
+  </div>
+</section>

@@ -1,0 +1,121 @@
+<div class="font-lato select-none space-y-5">
+
+  <!-- Breadcrumb -->
+  <nav class="text-xs text-neutral-400 flex flex-wrap gap-1" aria-label="Breadcrumb">
+    <a routerLink="/home" class="hover:text-white">Home</a>
+    @if (firstBook(); as b) {
+      <span>/</span>
+      <a [routerLink]="['/catalogue/categories', b.category, 'brands']" class="hover:text-white">{{ b.category }}</a>
+      @if (b.genre_group) {
+        <span>/</span>
+        <a routerLink="/catalogue/products" [queryParams]="{ genre_group: b.genre_group }" class="hover:text-white">{{ b.genre_group }}</a>
+      }
+      <span>/</span>
+      <a [routerLink]="['/catalogue/products', b.id]" class="hover:text-white">{{ b.title }}</a>
+    }
+    <span>/</span>
+    <span class="text-neutral-200">Checkout</span>
+  </nav>
+
+  <!-- Shopping cart -->
+  <section class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg space-y-3">
+    <h1 class="font-poppins text-white border-b border-neutral-800 pb-2">Shopping Cart</h1>
+
+    @if (cart(); as c) {
+      @if (c.items.length === 0) {
+        <p class="text-sm text-neutral-400 py-6 text-center">
+          Your cart is empty. <a routerLink="/home" class="text-blue-400 underline">Browse books</a>
+        </p>
+      }
+      @for (line of c.items; track line.product.id) {
+        <article class="flex gap-4 p-3 border border-neutral-800 rounded">
+          <a [routerLink]="['/catalogue/products', line.product.id]" class="shrink-0">
+            <img [src]="line.product.image_url" [alt]="line.product.title" class="w-20 h-28 object-cover bg-neutral-800 rounded" (error)="hideImage($event)" />
+          </a>
+          <div class="flex-1 min-w-0 space-y-1">
+            <a [routerLink]="['/catalogue/products', line.product.id]" class="font-poppins text-white hover:underline">{{ line.product.title }}</a>
+            <p class="text-xs text-neutral-400">by
+              <a routerLink="/catalogue/products" [queryParams]="{ search: line.product.author }" class="text-blue-400 hover:underline">{{ line.product.author }}</a>
+            </p>
+            <p class="text-[11px] text-neutral-400 line-clamp-2">{{ line.product.description }}</p>
+            <p class="text-xs text-neutral-300">{{ line.product.format }}</p>
+            <p class="text-[10px]">
+              <a [routerLink]="['/catalogue/categories', line.product.category, 'brands']" class="text-blue-500 underline">{{ line.product.category }}</a>
+              @if (line.product.genre_group) {
+                ·
+                <a routerLink="/catalogue/products" [queryParams]="{ genre_group: line.product.genre_group }" class="text-blue-500 underline">{{ line.product.genre_group }}</a>
+              }
+            </p>
+          </div>
+          <div class="flex flex-col items-end justify-between">
+            <div class="text-right">
+              <p class="font-poppins text-white">₹{{ line.product.price | number: '1.0-2' }}</p>
+              @if (line.product.tentative_delivery_date) {
+                <p class="text-[10px] text-neutral-400">Delivery by {{ line.product.tentative_delivery_date | date: 'EEE, d MMM' }}</p>
+              }
+            </div>
+            <div class="stepper">
+              <button type="button" aria-label="Decrease quantity" (click)="changeQuantity(line.product.id, line.quantity - 1)">−</button>
+              <span>{{ line.quantity }}</span>
+              <button type="button" aria-label="Increase quantity" (click)="changeQuantity(line.product.id, line.quantity + 1)">+</button>
+            </div>
+          </div>
+        </article>
+      }
+    } @else {
+      <p class="text-sm text-neutral-400">Loading your cart...</p>
+    }
+  </section>
+
+  <div class="checkout-bottom">
+    <!-- Address -->
+    <app-address-select [form]="addressForm"></app-address-select>
+
+    <!-- Grand total -->
+    <aside class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg space-y-3 text-sm">
+      <h2 class="font-poppins text-white border-b border-neutral-800 pb-2">Grand Total</h2>
+
+      <div class="illustration" aria-hidden="true"><mat-icon>local_shipping</mat-icon></div>
+
+      @if (summary(); as s) {
+        <div class="space-y-1 text-neutral-300">
+          <div class="flex justify-between"><span>Price ({{ s.item_count }} items)</span><span>₹{{ s.subtotal | number: '1.2-2' }}</span></div>
+          <div class="flex justify-between"><span>Tax</span><span>₹{{ s.tax | number: '1.2-2' }}</span></div>
+          <div class="flex justify-between">
+            <span>Delivery Charges</span>
+            <span [class.text-mint-500]="s.delivery_charge === 0">{{ s.delivery_charge === 0 ? 'Free' : '₹' + s.delivery_charge }}</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex gap-2">
+            <input class="form-input" placeholder="Coupon code" aria-label="Coupon code" [value]="couponInput()" (input)="couponInput.set($any($event.target).value)" (keyup.enter)="applyCoupon()" />
+            <button type="button" class="app-btn" (click)="applyCoupon()">Apply</button>
+          </div>
+          @if (couponMessage()) {
+            <p class="text-xs mt-1" [class.text-mint-500]="!couponIsError()" [class.text-red-400]="couponIsError()">{{ couponMessage() }}</p>
+          } @else if (coupons().length) {
+            <p class="text-[11px] text-neutral-500 mt-1">Try {{ coupons()[0].code }}: {{ coupons()[0].description }}</p>
+          }
+        </div>
+
+        <div class="flex justify-between text-neutral-300">
+          <span>Discount</span><span>₹{{ s.discount + s.points_discount | number: '1.0-2' }}</span>
+        </div>
+
+        <app-gift-points [balance]="giftPoints()" [redeemed]="pointsRedeemed()" (redeem)="redeemPoints($event)"></app-gift-points>
+
+        <div class="flex justify-between text-white font-semibold text-base border-t border-neutral-800 pt-3">
+          <span>Total Amount</span><span>₹{{ s.total | number: '1.0-2' }}</span>
+        </div>
+      }
+
+      @if (error()) {
+        <p class="form-error" role="alert">{{ error() }}</p>
+      }
+
+      <button type="button" class="app-btn primary w-full" [disabled]="paying() || !cart()?.items?.length" (click)="payNow()">Proceed to Payment</button>
+      <p class="text-[11px] text-neutral-500 text-center">You will choose how to pay on the next screen.</p>
+    </aside>
+  </div>
+</div>

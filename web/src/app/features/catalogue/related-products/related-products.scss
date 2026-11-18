@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.related-title {
+  font-family: var(--font-poppins);
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.related-item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.related-cover {
+  width: 96px;
+  height: 144px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #262626, #171717);
+  border: 1px solid #262626;
+  border-radius: 2px;
+}
+
+.related-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}

@@ -1,0 +1,168 @@
+<div class="detail-layout font-lato text-neutral-100 select-none">
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400 py-10 text-center">Loading book...</p>
+  } @else if (!book()) {
+    <div class="py-10 text-center space-y-3">
+      <p class="text-sm text-neutral-400">Book not found.</p>
+      <a routerLink="/home" class="text-blue-400 hover:underline text-sm">Back to Home</a>
+    </div>
+  } @else {
+    <div class="detail-main">
+
+      <!-- Breadcrumb: Home / Non-fiction / Self-help -->
+      <nav class="breadcrumb text-xs text-neutral-300 flex items-center space-x-2" aria-label="Breadcrumb">
+        <a routerLink="/home" class="text-blue-400 hover:underline">Home</a>
+        <span>/</span>
+        <a [routerLink]="['/catalogue/products']" [queryParams]="{ genre_group: book()!.genre_group }" class="text-blue-400 hover:underline">{{ book()!.genre_group }}</a>
+        <span>/</span>
+        <a [routerLink]="['/catalogue/categories', book()!.category, 'brands']" class="text-neutral-100">{{ book()!.category }}</a>
+      </nav>
+
+      <!-- Covers + info -->
+      <section class="top-section">
+        <div class="covers">
+          <img class="cover" [src]="book()!.image_url" [alt]="book()!.title + ' front cover'" (error)="hideImage($event)" />
+          <img class="cover" [src]="book()!.back_image_url || book()!.image_url" [alt]="book()!.title + ' back cover'" (error)="hideImage($event)" />
+        </div>
+
+        <div class="info space-y-3">
+          <div>
+            <h1 class="text-xl font-poppins font-medium text-white">{{ book()!.title }}</h1>
+            <p class="text-xs text-neutral-300 mt-1">by
+              <a [routerLink]="['/catalogue/products']" [queryParams]="{ search: book()!.author }" class="text-blue-400 underline">{{ book()!.author }}</a>
+            </p>
+          </div>
+
+          <p class="text-xs text-neutral-400">{{ book()!.description }}</p>
+
+          <p class="text-xs text-neutral-300">Published by:
+            <a [routerLink]="['/catalogue/categories', book()!.category, 'brands']" [queryParams]="{ brand: book()!.brand }" class="text-blue-400 underline">{{ book()!.brand }}</a>
+          </p>
+
+          <div class="text-xs space-y-1">
+            <span class="text-neutral-300 block">{{ book()!.format }}</span>
+            <span class="block">
+              <a [routerLink]="['/catalogue/products']" [queryParams]="{ genre_group: book()!.genre_group }" class="text-blue-400 underline">{{ book()!.genre_group }}</a>,
+              <a [routerLink]="['/catalogue/categories', book()!.category, 'brands']" class="text-blue-400 underline">{{ book()!.category }}</a>
+            </span>
+          </div>
+
+          <div>
+            <p class="text-3xl font-poppins font-semibold text-white">₹{{ book()!.price }}</p>
+            @if (book()!.tentative_delivery_date) {
+              <p class="text-xs text-neutral-300 mt-1">Delivery by <strong>{{ book()!.tentative_delivery_date | date: 'EEE, d MMM' }}</strong></p>
+            } @else {
+              <p class="text-xs text-red-400 mt-1">Currently out of stock</p>
+            }
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button type="button" class="btn btn-primary" [disabled]="book()!.stock === 0" (click)="addToCart()">
+              Add to Cart <mat-icon>shopping_cart</mat-icon>
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="addToWishlist()">
+              Add to Wishlist <mat-icon>bookmark_border</mat-icon>
+            </button>
+          </div>
+
+          @if (actionMessage()) {
+            <p class="text-xs text-mint-500" role="status">{{ actionMessage() }}</p>
+          }
+
+          <div class="facts">
+            <div class="fact">
+              <mat-icon>translate</mat-icon>
+              <div>
+                <span class="fact-label">Language</span>
+                <span class="text-blue-400 underline">{{ book()!.language }}</span>
+              </div>
+            </div>
+            <div class="fact">
+              <mat-icon>star_border</mat-icon>
+              <div>
+                <span class="fact-label">Rating</span>
+                <span class="stars" [attr.aria-label]="book()!.rating + ' out of 5'">
+                  @for (s of starIndexes; track s) {
+                    <mat-icon [class.filled]="s < ratingRounded()">{{ s < ratingRounded() ? 'star' : 'star_border' }}</mat-icon>
+                  }
+                </span>
+              </div>
+            </div>
+            <div class="fact">
+              <mat-icon>attach_money</mat-icon>
+              <div>
+                <span class="fact-label">Sells</span>
+                <span class="font-semibold text-neutral-100">{{ book()!.popularity }} copies sold</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About the writer -->
+      <section class="space-y-3">
+        <h2 class="section-title">About the writer</h2>
+        <div class="writer">
+          <img class="writer-photo" [src]="book()!.author_image_url" [alt]="book()!.author" (error)="hideImage($event)" />
+          <div>
+            <h3 class="text-base font-poppins text-white">{{ book()!.author }}</h3>
+            <p class="text-xs text-neutral-400 mt-2 leading-relaxed">{{ book()!.author_bio }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews -->
+      <section class="space-y-3">
+        <h2 class="section-title">Reviews</h2>
+        <div class="reviews">
+
+          <form class="review-form" [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+            <div class="flex items-center justify-between text-xs text-neutral-300">
+              <label for="review-comment">Leave Your Review</label>
+              <span>{{ reviewForm.controls.comment.value.length }}/{{ maxReviewLength }}</span>
+            </div>
+            <textarea id="review-comment" formControlName="comment" [maxlength]="maxReviewLength" placeholder="Placeholder text" rows="6"></textarea>
+
+            <div class="flex items-center justify-between mt-3">
+              <div class="stars input-stars" role="radiogroup" aria-label="Your rating">
+                @for (s of starIndexes; track s) {
+                  <button type="button" role="radio" [attr.aria-checked]="reviewForm.controls.rating.value === s + 1"
+                          [attr.aria-label]="s + 1 + ' star'" (click)="setRating(s + 1)">
+                    <mat-icon [class.filled]="s < reviewForm.controls.rating.value">{{ s < reviewForm.controls.rating.value ? 'star' : 'star_border' }}</mat-icon>
+                  </button>
+                }
+              </div>
+              <button type="submit" class="btn btn-primary" [disabled]="reviewForm.invalid || submitting()">
+                Submit <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </form>
+
+          <div class="review-list">
+            @for (r of reviews(); track r.id) {
+              <article class="review">
+                <h4 class="text-sm text-white">{{ r.name }}</h4>
+                <p class="text-xs text-neutral-300 mt-2 leading-relaxed">{{ r.comment }}</p>
+                <span class="stars small mt-3">
+                  @for (s of starIndexes; track s) {
+                    <mat-icon [class.filled]="s < r.rating">{{ s < r.rating ? 'star' : 'star_border' }}</mat-icon>
+                  }
+                </span>
+              </article>
+            } @empty {
+              <p class="text-xs text-neutral-400">No reviews yet. Be the first to review this book.</p>
+            }
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- Related reads (right column) -->
+    <aside class="detail-aside">
+      <app-related-products [bookId]="book()!.id"></app-related-products>
+    </aside>
+  }
+
+</div>

@@ -1,0 +1,31 @@
+<div class="space-y-4 font-lato select-none">
+  <nav class="text-xs text-neutral-300 flex items-center space-x-2" aria-label="Breadcrumb">
+    <a routerLink="/home" class="text-blue-400 hover:underline">Home</a>
+    <span>/</span>
+    <a routerLink="/catalogue/categories" class="text-blue-400 hover:underline">Categories</a>
+    <span>/</span>
+    <span class="text-neutral-100">{{ category() }}</span>
+  </nav>
+
+  <h2 class="text-lg font-semibold font-poppins text-white tracking-wide border-b border-neutral-800 pb-2">{{ category() }}</h2>
+
+  <!-- Brand chips: "All brands" + one per publisher -->
+  <div class="brand-chips" role="list" aria-label="Brands">
+    <a role="listitem" class="chip" [class.active]="!selectedBrand()" [routerLink]="[]">All brands</a>
+    @for (b of brands(); track b) {
+      <a role="listitem" class="chip" [class.active]="selectedBrand() === b" [routerLink]="[]" [queryParams]="{ brand: b }">{{ b }}</a>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400 py-6 text-center">Loading books...</p>
+  } @else {
+    <div class="product-grid">
+      @for (book of products(); track book.id) {
+        <app-product-card [book]="book"></app-product-card>
+      } @empty {
+        <p class="text-sm text-neutral-400 py-6 text-center border border-dashed border-neutral-800 rounded-lg col-span-full">No Products Found.</p>
+      }
+    </div>
+  }
+</div>

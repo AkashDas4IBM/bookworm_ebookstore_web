@@ -1,0 +1,71 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  // Fills the host; sidenav and content each scroll vertically on their own
+  mat-sidenav-container {
+    flex: 1;
+    min-height: 0;
+  }
+
+  mat-sidenav-content {
+    overflow-y: auto;
+  }
+
+  .custom-mat-sidenav {
+    width: 20% !important;
+    min-width: 220px;
+    background-color: var(--color-secondary-black) !important;
+    border-right: 1px solid #262626 !important;
+    // border-color: #262626 !important;
+    border-radius: 0 !important;
+  }
+
+  .custom-mat-close-btn {
+    color: #a3a3a3; // Equivalent to text-neutral-400
+    transition: color 0.15s ease-in-out;
+
+    &:hover {
+      color: #ffffff; // Equivalent to hover:text-white
+    }
+  }
+
+  .menu-bar-open {
+    font-size: 18px;
+    line-height: 1.5;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Ensure Angular Material Sidenav inherits your custom secondary-black theme
+::ng-deep .mat-drawer-inner-container {
+  background-color: var(--color-secondary-black, #121212);
+  overflow-y: auto;
+
+  /* Custom subtle dark scrollbar */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #2e2e2e;
+    border-radius: 9999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #454545;
+  }
+}
+
+// // Darken mobile backdrop overlay
+// ::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+//   background-color: rgba(0, 0, 0, 0.7) !important;
+// }
