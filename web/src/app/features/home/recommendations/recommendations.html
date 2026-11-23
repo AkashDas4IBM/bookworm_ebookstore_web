@@ -1,0 +1,12 @@
+@if (books().length) {
+  <section class="space-y-4">
+    <h2 class="text-lg font-semibold font-poppins text-white tracking-wide border-b border-neutral-800 pb-2">
+      Based on your orders
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (book of books(); track book.id) {
+        <app-product-card [book]="book" label="For you"></app-product-card>
+      }
+    </div>
+  </section>
+}

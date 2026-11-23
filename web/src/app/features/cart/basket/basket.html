@@ -1,0 +1,58 @@
+<div class="font-lato select-none space-y-4">
+  <h1 class="text-lg font-semibold font-poppins text-white border-b border-neutral-800 pb-2">Shopping Cart</h1>
+
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  @if (cart(); as c) {
+    @if (c.items.length === 0) {
+      <div class="text-sm text-neutral-400 py-10 text-center border border-dashed border-neutral-800 rounded-lg">
+        Your cart is empty.
+        <a routerLink="/home" class="text-blue-400 underline ml-1">Browse books</a>
+      </div>
+    } @else {
+      <div class="basket-layout">
+        <div class="space-y-3">
+          @for (line of c.items; track line.product.id) {
+            <article class="flex gap-4 p-4 bg-secondary-black3 border border-neutral-800 rounded-lg">
+              <a [routerLink]="['/catalogue/products', line.product.id]" class="shrink-0">
+                <img [src]="line.product.image_url" [alt]="line.product.title" class="w-20 h-28 object-cover bg-neutral-800 rounded" (error)="hideImage($event)" />
+              </a>
+              <div class="flex-1 min-w-0">
+                <a [routerLink]="['/catalogue/products', line.product.id]" class="font-poppins text-white hover:underline">{{ line.product.title }}</a>
+                <p class="text-xs text-neutral-400">by {{ line.product.author }} · {{ line.product.format }}</p>
+                @if (line.product.tentative_delivery_date) {
+                  <p class="text-xs text-neutral-300 mt-1">Delivery by <strong>{{ line.product.tentative_delivery_date | date: 'EEE, d MMM' }}</strong></p>
+                }
+                <div class="flex items-center gap-3 mt-3">
+                  <div class="stepper">
+                    <button type="button" aria-label="Decrease quantity" (click)="change(line.product.id, line.quantity - 1)">−</button>
+                    <span>{{ line.quantity }}</span>
+                    <button type="button" aria-label="Increase quantity" (click)="change(line.product.id, line.quantity + 1)">+</button>
+                  </div>
+                  <button type="button" class="text-xs text-red-400 underline" (click)="remove(line.product.id)">Remove</button>
+                </div>
+              </div>
+              <p class="font-poppins text-white">₹{{ line.line_total | number: '1.0-2' }}</p>
+            </article>
+          }
+        </div>
+
+        <aside class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg space-y-2 text-sm self-start">
+          <h2 class="font-poppins text-white">Price details</h2>
+          <div class="flex justify-between text-neutral-300"><span>Price ({{ c.summary.item_count }} items)</span><span>₹{{ c.summary.subtotal | number: '1.2-2' }}</span></div>
+          <div class="flex justify-between text-neutral-300"><span>Tax</span><span>₹{{ c.summary.tax | number: '1.2-2' }}</span></div>
+          <div class="flex justify-between text-neutral-300">
+            <span>Delivery</span>
+            <span>{{ c.summary.delivery_charge === 0 ? 'Free' : '₹' + c.summary.delivery_charge }}</span>
+          </div>
+          <div class="flex justify-between text-white font-semibold border-t border-neutral-800 pt-2"><span>Total</span><span>₹{{ c.summary.total | number: '1.2-2' }}</span></div>
+          <a routerLink="/checkout" class="app-btn primary w-full mt-2">Proceed to Checkout</a>
+        </aside>
+      </div>
+    }
+  } @else {
+    <p class="text-sm text-neutral-400">Loading your cart...</p>
+  }
+</div>

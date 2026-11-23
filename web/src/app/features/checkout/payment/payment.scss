@@ -1,0 +1,198 @@
+:host {
+  display: block;
+}
+
+// Full-width "stage" with a deep-blue backdrop and a few book-cover colour accents
+.pay-backdrop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100% + 32px);
+  margin: -16px; // cancels the page padding so the backdrop fills the content area
+  padding: 32px 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 15%, #1d5a85 0, transparent 28%),
+    radial-gradient(circle at 85% 80%, #1c5d8b 0, transparent 30%),
+    #123f63;
+}
+
+.shape {
+  position: absolute;
+  pointer-events: none;
+
+  &.s1 { top: 8%;  left: 8%;  width: 120px; height: 150px; background: #b8582d; border-radius: 6px; transform: rotate(-18deg); opacity: 0.85; }
+  &.s2 { top: 4%;  right: 14%; width: 90px;  height: 130px; background: #1b6a9a; border-radius: 6px; opacity: 0.8; }
+  &.s3 { bottom: 8%; left: 14%; width: 150px; height: 70px;  background: #d7a53a; border-radius: 6px; transform: rotate(6deg); opacity: 0.85; }
+  &.s4 { bottom: 10%; right: 10%; width: 150px; height: 90px; background: #cdbf9d; border-radius: 6px; transform: rotate(-8deg); opacity: 0.85; }
+  &.s5 { top: 44%; right: 6%; width: 28px; height: 28px; background: #c0592f; border-radius: 50%; }
+  &.s6 { top: 30%; left: 30%; width: 18px; height: 18px; background: #d7a53a; transform: rotate(45deg); }
+}
+
+.pay-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  color: #e5e5e5;
+  background: #262626;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.pay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #2e2e2e;
+  border-bottom: 1px solid #1f1f1f;
+
+  h1 {
+    font-family: var(--font-poppins);
+    font-size: 17px;
+    font-weight: 400;
+    color: #fff;
+  }
+
+  p {
+    font-family: var(--font-poppins);
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.pay-body {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.pay-tabs {
+  display: flex;
+  flex-direction: column;
+  background: #3a3a3a;
+
+  button {
+    padding: 22px 14px;
+    font-size: 13px;
+    text-align: left;
+    color: #d4d4d4;
+    background: #3a3a3a;
+    border: 0;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #2a2a2a;
+    cursor: pointer;
+
+    &:hover {
+      background: #444;
+    }
+
+    &.active {
+      font-weight: 700;
+      color: #fff;
+      background: #262626;
+      border-left-color: #3b82f6;
+    }
+  }
+}
+
+.pay-form {
+  padding: 18px 20px 20px;
+}
+
+.pay-input {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 13px;
+  color: #e5e5e5;
+  background: #3a3a3a;
+  border: 0;
+  border-bottom: 1px solid #737373;
+  outline: none;
+
+  &::placeholder {
+    color: #8a8a8a;
+  }
+
+  &:focus {
+    border-bottom-color: #3b82f6;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-bottom-color: #ef4444;
+  }
+}
+
+.pay-wallet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: #3a3a3a;
+  cursor: pointer;
+}
+
+.pay-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+.back-link {
+  font-size: 12px;
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.pay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #0f62fe;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #3b82f6;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 560px) {
+  .pay-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pay-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+
+    button {
+      flex: 1;
+      padding: 14px 10px;
+      border-left: 0;
+      border-bottom: 3px solid transparent;
+
+      &.active {
+        border-bottom-color: #3b82f6;
+      }
+    }
+  }
+}

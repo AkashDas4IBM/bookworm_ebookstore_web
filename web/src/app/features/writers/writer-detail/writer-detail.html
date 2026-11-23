@@ -1,0 +1,34 @@
+<div class="font-lato select-none space-y-5">
+  <a routerLink="/writers" class="text-xs text-blue-400 hover:underline">&larr; Back to My Writers</a>
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400">Loading writer...</p>
+  } @else if (!writer()) {
+    <p class="text-sm text-neutral-400 py-8 text-center border border-dashed border-neutral-800 rounded-lg">
+      This writer could not be found.
+    </p>
+  } @else {
+    <header class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg flex gap-4">
+      <img [src]="writer()!.image_url" [alt]="writer()!.name" (error)="hideImage($event)"
+           class="w-24 h-24 rounded-full object-cover bg-neutral-800 shrink-0" />
+      <div class="flex-1 space-y-2">
+        <h1 class="text-lg font-semibold font-poppins text-white">{{ writer()!.name }}</h1>
+        <p class="text-xs text-neutral-400">{{ writer()!.book_count }} {{ writer()!.book_count === 1 ? 'book' : 'books' }}</p>
+        <p class="text-xs text-neutral-300">{{ writer()!.bio }}</p>
+        <button type="button" class="app-btn" [class.primary]="!writer()!.following" (click)="toggleFollow()">
+          {{ writer()!.following ? 'Remove from My Writers' : 'Add to My Writers' }}
+        </button>
+        @if (message()) {
+          <p class="text-xs" [class.text-mint-500]="!isError()" [class.text-red-400]="isError()" role="status">{{ message() }}</p>
+        }
+      </div>
+    </header>
+
+    <h2 class="text-sm font-semibold text-neutral-200">Books by {{ writer()!.name }}</h2>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      @for (book of writer()!.books; track book.id) {
+        <app-product-card [book]="book" label="Book"></app-product-card>
+      }
+    </div>
+  }
+</div>

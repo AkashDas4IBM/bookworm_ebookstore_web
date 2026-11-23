@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.category-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #e5e5e5;
+  background: #121212;
+  border: 1px solid #262626;
+  border-radius: 8px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    color: #fff;
+    border-color: #3b82f6;
+  }
+}

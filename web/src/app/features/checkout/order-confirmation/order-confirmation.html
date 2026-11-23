@@ -1,0 +1,76 @@
+<div class="stage">
+  <span class="shape s1"></span><span class="shape s2"></span><span class="shape s3"></span>
+  <span class="shape s4"></span><span class="shape s5"></span><span class="shape s6"></span>
+
+  @if (error() && !order()) {
+    <p class="form-error relative" role="alert">{{ error() }}</p>
+  }
+
+  @if (order(); as o) {
+    <section class="confirm-card font-lato select-none" role="dialog" aria-modal="false" aria-labelledby="confirm-title">
+      <div class="tick" [class.cancelled]="o.status === 'Cancelled'" aria-hidden="true">
+        <mat-icon>{{ o.status === 'Cancelled' ? 'close' : 'check' }}</mat-icon>
+      </div>
+
+      <h1 id="confirm-title" class="message" role="status">
+        @if (o.status === 'Cancelled') {
+          Your order has been cancelled
+        } @else {
+          Your purchase of the following reads is successful
+        }
+      </h1>
+
+      <div class="books">
+        @for (item of o.items; track item.product_id) {
+          <article class="book">
+            <a [routerLink]="['/catalogue/products', item.product_id]" class="shrink-0">
+              <img class="cover" [src]="item.image_url" [alt]="item.title" (error)="hideImage($event)" />
+            </a>
+            <div class="book-info">
+              <h2><a [routerLink]="['/catalogue/products', item.product_id]">{{ item.title }}</a></h2>
+              <p class="by">by
+                <a class="link" routerLink="/catalogue/products" [queryParams]="{ search: item.author }">{{ item.author }}</a>
+              </p>
+              <p class="blurb">{{ item.description }}</p>
+              <p class="format">{{ item.format }}@if (item.quantity > 1) { · Qty {{ item.quantity }} }</p>
+              <p class="text-[11px]">
+                <a class="link" [routerLink]="['/catalogue/categories', item.category, 'brands']">{{ item.category }}</a>
+                @if (item.genre_group) {
+                  , <a class="link" routerLink="/catalogue/products" [queryParams]="{ genre_group: item.genre_group }">{{ item.genre_group }}</a>
+                }
+              </p>
+              <p class="price">₹{{ item.line_total | number: '1.0-2' }}</p>
+              @if (o.status !== 'Cancelled') {
+                <p class="delivery">Delivery by <strong>{{ o.estimated_delivery | date: 'EEE, d MMM' }}</strong></p>
+              }
+            </div>
+          </article>
+        }
+      </div>
+
+      <p class="meta">
+        Order #{{ o.id }} · Total paid ₹{{ o.total | number: '1.0-2' }}
+        @if (o.status !== 'Cancelled') { · You earned <span class="text-mint-500">{{ o.points_earned }} gift points</span> }
+      </p>
+
+      @if (error()) {
+        <p class="form-error text-center" role="alert">{{ error() }}</p>
+      }
+
+      <div class="actions">
+        <a routerLink="/home" class="continue-btn">
+          Continue your Shopping
+          <mat-icon>auto_stories</mat-icon>
+        </a>
+
+        @if (o.cancellable) {
+          <div class="cancel-row">
+            <span>Changed your mind? Free cancellation until {{ o.cancel_deadline | date: 'EEE, d MMM, h:mm a' }} (48 hrs)</span>
+            <button type="button" class="app-btn danger" [disabled]="cancelling()" (click)="cancel()">Cancel Order</button>
+          </div>
+        }
+        <a routerLink="/orders" class="link text-xs">View my orders</a>
+      </div>
+    </section>
+  }
+</div>

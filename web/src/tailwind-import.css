@@ -1,0 +1,14 @@
+/* Importing Tailwindcss */
+@import "tailwindcss"; 
+
+@theme {
+  --color-secondary-black: #121212;
+  --color-secondary-black2: #0a0a0a;
+  --color-secondary-black3: #0f0f0f;
+  --color-secondary-black4: #2a2a2a;
+
+  --color-mint-500: oklch(0.72 0.11 178);
+
+  --font-poppins: 'Poppins', sans-serif;
+  --font-lato: 'Lato', sans-serif;
+}

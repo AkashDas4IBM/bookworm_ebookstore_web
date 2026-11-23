@@ -1,0 +1,39 @@
+<div class="bg-secondary-black border border-neutral-800 rounded-lg p-4 flex space-x-4 hover:border-neutral-700 transition-all shadow-sm h-full">
+
+  <!-- Book cover: image with title/author overlay, gradient fallback if the image fails -->
+  <a [routerLink]="['/catalogue/products', book.id]"
+     class="relative overflow-hidden w-24 h-36 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded border border-neutral-700 flex flex-col justify-between p-2 shrink-0 shadow-inner">
+    <img [src]="book.image_url" [alt]="book.title" loading="lazy" (error)="$any($event.target).style.display = 'none'" class="absolute inset-0 w-full h-full object-cover" />
+    <div class="absolute inset-0 bg-black/50"></div>
+    <span class="relative text-[9px] text-neutral-300 uppercase font-bold tracking-widest">{{ label }}</span>
+    <span class="relative text-xs font-bold text-white text-center line-clamp-2">{{ book.title }}</span>
+    <span class="relative text-[9px] text-neutral-300 text-right">{{ book.author }}</span>
+  </a>
+
+  <!-- Book details -->
+  <div class="flex flex-col justify-between flex-1 min-w-0">
+    <div class="space-y-1">
+      <h3 class="font-semibold text-sm line-clamp-1">
+        <a [routerLink]="['/catalogue/products', book.id]" class="text-white hover:text-blue-400 transition-colors">{{ book.title }}</a>
+      </h3>
+      <p class="text-xs text-neutral-400">by
+        <a [routerLink]="['/catalogue/products']" [queryParams]="{ search: book.author }" class="text-blue-400 hover:underline">{{ book.author }}</a>
+      </p>
+      <p class="text-[11px] text-neutral-400 line-clamp-2 mt-1">{{ book.description }}</p>
+    </div>
+
+    <div class="space-y-1 pt-2 border-t border-neutral-800/80">
+      <span class="text-xs text-neutral-300 block font-medium">{{ book.format }}</span>
+      <a [routerLink]="['/catalogue/categories', book.category, 'brands']" class="text-[10px] text-blue-500 underline block">{{ book.category }}</a>
+      <div class="flex items-center justify-between pt-1">
+        <span class="text-base font-bold text-white font-poppins">₹{{ book.price }}</span>
+        @if (book.tentative_delivery_date) {
+          <span class="text-[10px] text-neutral-400">Delivery by {{ book.tentative_delivery_date | date: 'EEE, d MMM' }}</span>
+        } @else {
+          <span class="text-[10px] text-red-400">Out of stock</span>
+        }
+      </div>
+    </div>
+  </div>
+
+</div>

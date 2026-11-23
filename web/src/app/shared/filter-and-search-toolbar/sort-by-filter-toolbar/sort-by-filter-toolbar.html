@@ -1,0 +1,14 @@
+<div class="flex flex-col bg-secondary-black border border-neutral-800 p-3 rounded-lg flex-1 min-w-40">
+    <label class="text-xs text-neutral-400 mb-1 font-lato">Sort by</label>
+    <div class="relative flex items-center">
+        <select [ngModel]="filterService.filters().sortBy" (ngModelChange)="filterService.updateSortBy($event)"
+            class="w-full bg-transparent text-neutral-200 text-sm focus:outline-none appearance-none cursor-pointer pr-6">
+            <option value="Relevance" class="bg-secondary-black">Relevance</option>
+            <option value="Popularity" class="bg-secondary-black">Popularity</option>
+            <option value="Newest" class="bg-secondary-black">Newest</option>
+            <option value="Price: Low to High" class="bg-secondary-black">Price: Low to High</option>
+            <option value="Price: High to Low" class="bg-secondary-black">Price: High to Low</option>
+        </select>
+        <mat-icon class="absolute right-0 text-neutral-400 pointer-events-none text-lg">expand_more</mat-icon>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="font-lato select-none space-y-6">
+  <h1 class="text-lg font-semibold font-poppins text-white border-b border-neutral-800 pb-2">My Writers</h1>
+
+  @if (message()) {
+    <p class="text-xs" [class.text-mint-500]="!isError()" [class.text-red-400]="isError()" role="status">{{ message() }}</p>
+  }
+
+  <ng-template #writerCard let-w>
+    <article class="p-4 bg-secondary-black3 border border-neutral-800 rounded-lg flex gap-4">
+      <img [src]="w.image_url" [alt]="w.name" (error)="hideImage($event)"
+           class="w-16 h-16 rounded-full object-cover bg-neutral-800 shrink-0" />
+      <div class="flex-1 min-w-0 space-y-1">
+        <h3 class="text-sm font-semibold">
+          <a [routerLink]="['/writers', w.id]" class="text-white hover:text-blue-400">{{ w.name }}</a>
+        </h3>
+        <p class="text-[11px] text-neutral-400">{{ w.book_count }} {{ w.book_count === 1 ? 'book' : 'books' }}</p>
+        <p class="text-[11px] text-neutral-400 line-clamp-2">{{ w.bio }}</p>
+      </div>
+      <button type="button" class="app-btn self-start" [class.primary]="!w.following" (click)="toggleFollow(w)">
+        {{ w.following ? 'Remove' : 'Add' }}
+      </button>
+    </article>
+  </ng-template>
+
+  @if (loading()) {
+    <p class="text-sm text-neutral-400">Loading writers...</p>
+  } @else {
+    <section class="space-y-3">
+      <h2 class="text-sm font-semibold text-neutral-200">Your writers ({{ myWriters().length }})</h2>
+      @if (myWriters().length === 0) {
+        <p class="text-sm text-neutral-400 py-6 text-center border border-dashed border-neutral-800 rounded-lg">
+          You have not added any writers yet. Pick some from the list below.
+        </p>
+      }
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        @for (w of myWriters(); track w.id) {
+          <ng-container *ngTemplateOutlet="writerCard; context: { $implicit: w }"></ng-container>
+        }
+      </div>
+    </section>
+
+    @if (otherWriters().length > 0) {
+      <section class="space-y-3">
+        <h2 class="text-sm font-semibold text-neutral-200">Discover more writers</h2>
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          @for (w of otherWriters(); track w.id) {
+            <ng-container *ngTemplateOutlet="writerCard; context: { $implicit: w }"></ng-container>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

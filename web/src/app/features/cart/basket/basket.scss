@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.basket-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #404040;
+  border-radius: 2px;
+
+  button {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    background: #262626;
+    border: 0;
+    cursor: pointer;
+
+    &:hover {
+      background: #404040;
+    }
+  }
+
+  span {
+    min-width: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+  }
+}
+
+@media (max-width: 800px) {
+  .basket-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
